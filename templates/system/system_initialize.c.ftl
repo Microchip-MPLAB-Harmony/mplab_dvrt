@@ -1,0 +1,1 @@
+    DVRT_Initialize();
