@@ -30,4 +30,4 @@ def loadModule():
     dvrt_Component.setDisplayType("DATA VISUALIZER")
     dvrt_Component.addDependency("UART", "UART", False)
     dvrt_Component.addDependency("TMR", "TMR", False)
-    
+    dvrt_Component.addCapability("SYS_TICK", "SYS_TICK", True)

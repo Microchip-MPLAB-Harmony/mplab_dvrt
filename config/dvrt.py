@@ -27,13 +27,32 @@ global sort_alphanumeric
 dvrt_mcc_helpkeyword = "mcc_h3_dvrt_configurations"
 
 def handleMessage(messageID, args):
-
+    global dvrt_useSystick
+    global dvrt_tmrPLIB
+    global dvrt_AchievableTickRateMsComment
+    global dvrt_TickRateMs
+    
+    sysTickRate = {"sys_time_tick_ms" : 0.0}
+    sysTickPLIBConfig = dict()
     result_dict =  dict()
 
+    if dvrt_useSystick.getValue() == True:
+        dvrt_tmrPLIB.setValue("core")
+        
     if  messageID == "DVRT_PLIB_CAPABILITY":
         if args["plib_mode"] == "PERIOD_MODE":
             result_dict.update({"TIMER_MODE": "DVRT_PLIB_MODE_PERIOD", "dvrt_tick_microsec": 100})
-
+    
+    elif messageID == "DVRT_SYS_TICK_PLIB_CAPABILITY":                                                  #SYS_TIME_PLIB_CAPABILITY
+        dvrt_TickRateMs.setVisible(True)
+        dvrt_AchievableTickRateMsComment.setVisible(True)
+        sysTickPLIBConfig["plib_mode"] = "DVRT_PLIB_MODE_PERIOD"                                        #SYS_TIME_PLIB_MODE_PERIOD
+        sysTickPLIBConfig["sys_tick_ms"] = float(dvrt_TickRateMs.getValue())                            #sys_time_tick_ms
+        return sysTickPLIBConfig
+            
+    elif messageID == "DVRT_ACHIEVABLE_TICK_RATE_HZ":
+        dvrt_AchievableTickRateHz.setValue(args["tick_rate_hz"])
+        
     elif (messageID == "REQUEST_CONFIG_PARAMS"):
         if args.get("localComponentID") != None:
 
@@ -61,12 +80,12 @@ def onAttachmentConnected(source, target):
             deviceUsed.setValue(remoteID.upper())
 
     elif connectID == "TMR":
-        localComponent.getSymbolByID("DVRT_REMOTE_COMPONENT_ID").setValue(remoteID)
-        plibUsed = localComponent.getSymbolByID("TMR_PLIB_CONNECTED")
+        #localComponent.getSymbolByID("DVRT_REMOTE_COMPONENT_ID").setValue(remoteID)
+        plibUsed = localComponent.getSymbolByID("TMR_PLIB_COMPONENT_CONNECTED")
         plibUsed.clearValue()
         plibUsed.setValue(remoteID.upper())
         #Request PLIB to publish it's capabilities
-        sysTimeDict = Database.sendMessage(remoteID, "DVRT_PUBLISH_CAPABILITIES", dvrtDict)
+        plib_Dict = Database.sendMessage(remoteID, "DVRT_PUBLISH_CAPABILITIES", dvrtDict)
 
 def onAttachmentDisconnected(source, target):
     global plibUsed
@@ -90,7 +109,7 @@ def onAttachmentDisconnected(source, target):
         plibUsed.clearValue()
 
     elif connectID == "TMR" :
-        plibUsed = localComponent.getSymbolByID("TMR_PLIB_CONNECTED")
+        plibUsed = localComponent.getSymbolByID("TMR_PLIB_COMPONENT_CONNECTED")
         plibUsed.clearValue()
 
 
@@ -112,21 +131,75 @@ def displayDVRTSuperloopComment(symbol, event):
     else:
         symbol.setVisible(False)
 
+def onUsingSystickChange(symbol, event):
+    global dvrt_AchievableTickRateMsComment
+    
+    dvrtDict = {"ID":"dvrt"}
+    localComponent = symbol.getComponent()
+   
+    if event["id"] == "DVRT_USE_SYSTICK":
+        if event["value"] == True:
+            localComponent.getSymbolByID("TMR_PLIB_COMPONENT_CONNECTED").setValue("core")
+            localComponent.setDependencyEnabled("TMR", False)
+            #Request PLIB to publish it's capabilities
+            Database.sendMessage("core", "DVRT_PUBLISH_CAPABILITIES", dvrtDict)
+        else:
+            localComponent.getSymbolByID("TMR_PLIB_COMPONENT_CONNECTED").setValue("")
+            localComponent.setDependencyEnabled("TMR", True)
+            #Let sys_tick PLIB know that DVRT no longer uses sys_tick PLIB
+            Database.sendMessage("core", "DVRT_PUBLISH_CAPABILITIES", {"ID":"None"})
+            dvrt_TickRateMs.setVisible(False)
+            dvrt_AchievableTickRateMsComment.setVisible(False)
+    elif event["id"] == "SYSTICK_BUSY":
+        if event["value"] == False:
+            localComponent.getSymbolByID("DVRT_USE_SYSTICK").setVisible(True)
+        if event["value"] == True:
+            if (localComponent.getSymbolByID("DVRT_USE_SYSTICK").getValue() == True):
+                localComponent.getSymbolByID("DVRT_USE_SYSTICK").setVisible(True)
+            elif (localComponent.getSymbolByID("DVRT_USE_SYSTICK").getValue() == False):
+                localComponent.getSymbolByID("DVRT_USE_SYSTICK").setVisible(False)
+                
+def Dvrt_SysTickRateCallback(symbol, event):
+    global dvrt_tmrPLIB
+
+    dummyDict = {}
+    sysTickRate = {"dvrt_tick_ms" : 0.0}                                                                                 #sys_time_tick_ms
+
+    if (event["id"] == "DVRT_TICK_RATE_MS"):
+        if dvrt_tmrPLIB.getValue() != "" :
+            sysTickRate["dvrt_tick_ms"] = float(symbol.getValue())
+            dummyDict = Database.sendMessage(dvrt_tmrPLIB.getValue(), "DVRT_TICK_RATE_CHANGED", sysTickRate)            #SYS_TIME_TICK_RATE_CHANGED
+            
+def Dvrt_AchievableTickRateMsCallback(symbol, event):
+
+    if (event["id"] == "DVRT_ACHIEVABLE_TICK_RATE_HZ"):
+        if event["value"] != 0:
+            achievableRateMs =  100000.0 / event["value"]
+        else:
+            achievableRateMs = 0
+        achievableRateMs = achievableRateMs * 1000.0
+        symbol.setLabel("Achievable Tick Rate Resolution (ms):" + str(achievableRateMs) + "ms")
+
 def instantiateComponent(dvrtComponent):
 
     global dvrtmoduleName
     global dvrtTimerDep
-
+    global dvrt_useSystick
+    global dvrt_tmrPLIB
+    global dvrt_TickRateMs
+    global dvrt_AchievableTickRateHz
+    global dvrt_AchievableTickRateMsComment
+    
+    systickNode = ATDF.getNode('/avr-tools-device-file/modules/module@[name="SysTick"]')
+    
     dvrtmoduleName = dvrtComponent.createStringSymbol("DVRT_MODULE", None)
     dvrtmoduleName.setVisible(False)
     dvrtmoduleName.setDefaultValue(dvrtComponent.getID().upper())
 
   #  res = Database.activateComponents(["HarmonyCore"])
-  #
-  #  # Enable "Generate Harmony Driver Common Files" option in MHC
+  #  Enable "Generate Harmony Driver Common Files" option in MHC
   #  Database.sendMessage("HarmonyCore", "ENABLE_DRV_COMMON", {"isEnabled":True})
-  #
-  #  # Enable "Generate Harmony System Service Common Files" option in MHC
+  #  Enable "Generate Harmony System Service Common Files" option in MHC
   #  Database.sendMessage("HarmonyCore", "ENABLE_SYS_COMMON", {"isEnabled":True})
 
     dvrt_uartPLIB = dvrtComponent.createStringSymbol("USART_PLIB_CONNECTED", None)
@@ -142,18 +215,43 @@ def instantiateComponent(dvrtComponent):
     dvrt_uartPLIBname.setDefaultValue("")
     dvrt_uartPLIBname.setDependencies(usartplibnamecallback, ["USART_PLIB_CONNECTED"])
 
-    dvrt_tmrPLIB = dvrtComponent.createStringSymbol("TMR_PLIB_CONNECTED", None)
+    dvrt_tmrPLIB = dvrtComponent.createStringSymbol("TMR_PLIB_COMPONENT_CONNECTED", None)           #used for both tmr & systick
     dvrt_tmrPLIB.setLabel("tmr PLIB Used")
     dvrt_tmrPLIB.setHelp(dvrt_mcc_helpkeyword)
     dvrt_tmrPLIB.setReadOnly(True)
     dvrt_tmrPLIB.setVisible(False)
     dvrt_tmrPLIB.setDefaultValue("")
 
-    dvrt_RemoteComponentId = dvrtComponent.createStringSymbol("DVRT_REMOTE_COMPONENT_ID", None)
-    dvrt_RemoteComponentId.setLabel("Remote component id")
-    dvrt_RemoteComponentId.setVisible(False)
-    dvrt_RemoteComponentId.setDefaultValue("")
-
+    dvrt_useSystick = dvrtComponent.createBooleanSymbol("DVRT_USE_SYSTICK", None)           # SysTick symbol for "Use Systick?"
+    dvrt_useSystick.setLabel("Use Systick?")
+    dvrt_useSystick.setHelp(dvrt_mcc_helpkeyword)
+    dvrt_useSystick.setDefaultValue(False)
+    dvrt_useSystick.setVisible(systickNode != None) 
+    dvrt_useSystick.setDependencies(onUsingSystickChange, ["DVRT_USE_SYSTICK", "core.SYSTICK_BUSY"])
+    
+  #  dvrt_RemoteComponentId = dvrtComponent.createStringSymbol("DVRT_REMOTE_COMPONENT_ID", None)            #check for this symbol usecase
+  #  dvrt_RemoteComponentId.setLabel("Remote component id")
+  #  dvrt_RemoteComponentId.setVisible(False)
+  #  dvrt_RemoteComponentId.setDefaultValue("")
+    
+    dvrt_TickRateMs = dvrtComponent.createFloatSymbol("DVRT_TICK_RATE_MS", None)                            # SysTick symbol
+    dvrt_TickRateMs.setLabel("Tick Rate (ms)")
+    dvrt_TickRateMs.setHelp(dvrt_mcc_helpkeyword)
+    dvrt_TickRateMs.setMax(5000)          #5 seconds
+    dvrt_TickRateMs.setMin(0.1)           #100 usec
+    dvrt_TickRateMs.setDefaultValue(0.1)
+    dvrt_TickRateMs.setVisible(False)
+    dvrt_TickRateMs.setDependencies(Dvrt_SysTickRateCallback, ["DVRT_TICK_RATE_MS"])
+    
+    dvrt_AchievableTickRateHz = dvrtComponent.createLongSymbol("DVRT_ACHIEVABLE_TICK_RATE_HZ", None)        # SysTick symbol
+    dvrt_AchievableTickRateHz.setDefaultValue(1)
+    dvrt_AchievableTickRateHz.setVisible(False)
+    
+    dvrt_AchievableTickRateMsComment = dvrtComponent.createCommentSymbol("DVRT_ACHIEVABLEE_TICK_RATE_COMMENT", None)                                    # SysTick symbol
+    dvrt_AchievableTickRateMsComment.setLabel("Achievable Tick Rate Resolution (ms):" + str(dvrt_AchievableTickRateHz.getValue()) + "ms")
+    dvrt_AchievableTickRateMsComment.setVisible(False)
+    dvrt_AchievableTickRateMsComment.setDependencies(Dvrt_AchievableTickRateMsCallback, ["DVRT_ACHIEVABLE_TICK_RATE_HZ"])
+    
     #DVRT Run Process
     dvrt_runProcess = dvrtComponent.createKeyValueSetSymbol("DVRT_CALLBACK_PROCESS", None)
     dvrt_runProcess.setLabel("Select DVRT process to be called from")

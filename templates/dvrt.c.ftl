@@ -129,7 +129,7 @@ void TMR_Callback_Handler(uint8_t status, uintptr_t context)
 <#if DVRT_CALLBACK_PROCESS == "Interrupt">
     DVRT_Process();
 <#elseif DVRT_CALLBACK_PROCESS == "Polling">
-	timer_expired = 1;
+    timer_expired = 1;
     DVCmdInterval_Counter++;
     DVStreamInterval_Counter++;
 <#else>
@@ -239,36 +239,36 @@ void DVRT_Process(void)
         DVflag.streamOn = 0;                // stop streaming
     }
 <#elseif DVRT_CALLBACK_PROCESS == "Polling">
-	if( timer_expired == 1)
-	{
-		if(dvrt_USARTPlibAPI.errorGet())
-		{
-			rxBufPtr = 0;
-			return;
-		}
+    if( timer_expired == 1)
+    {
+        if(dvrt_USARTPlibAPI.errorGet())
+        {
+            rxBufPtr = 0;
+            return;
+        }
 
-		if(DVCmdInterval_Counter++ >= DVCmdInterval)
-		{
-			DVCmdInterval_Counter = 0;
-			DVRT_HandleCommand();
-		}
+        if(DVCmdInterval_Counter++ >= DVCmdInterval)
+        {
+            DVCmdInterval_Counter = 0;
+            DVRT_HandleCommand();
+        }
 
-		if(DVStreamInterval_Counter++ >= DVStreamInterval)
-		{
-			DVStreamInterval_Counter = 0;
-			if(DVflag.streamOn)
-			{
-				DVRT_WritePacket();
-			}
-		}
+        if(DVStreamInterval_Counter++ >= DVStreamInterval)
+        {
+            DVStreamInterval_Counter = 0;
+            if(DVflag.streamOn)
+            {
+                DVRT_WritePacket();
+            }
+        }
 
-		if(DVflag.osr || DVflag.ping)           // One shot reading or ping command execution
-		{   DVflag.osr = 0;
-			DVflag.ping = 0;
-			DVflag.streamOn = 0;                // stop streaming
-		}
-		timer_expired =0;
-	}
+        if(DVflag.osr || DVflag.ping)           // One shot reading or ping command execution
+        {   DVflag.osr = 0;
+            DVflag.ping = 0;
+            DVflag.streamOn = 0;                // stop streaming
+        }
+        timer_expired =0;
+    }
 </#if>
 }
 

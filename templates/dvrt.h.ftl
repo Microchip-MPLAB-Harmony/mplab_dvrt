@@ -81,17 +81,15 @@
 
 
 #define DYNAMIC_VAR_PTR_COUNT       ${DYNAMIC_VARIABLES_COUNT}                      /* Number of Dynamic Variables Pointers in the Monitor Table */
-#define DV_STREAM_TIME              20                      						/* Streaming time interval (time dependent on main loop tick) */
-#define DV_RX_CMD_TIMEOUT           200                     						/* Command timeout: Timeout after number of times DVRT_process() is called */
-#define DV_FW_CODE                  ${PJT_FMWR_CODE}        						/* Project Firmware Code */
-						
-#define DV_START_OF_FRAME           0x03                    						/* Start Frame Byte */
-#define DV_END_OF_FRAME             0xFC                    						/* End Frame Byte */
-#define DV_RX_CMD_MIN_SIZE          3                       						/* Minimun number of byte in a RX command */
+#define DV_STREAM_TIME              20                                              /* Streaming time interval (time dependent on main loop tick) */
+#define DV_RX_CMD_TIMEOUT           200                                             /* Command timeout: Timeout after number of times DVRT_process() is called */
+#define DV_FW_CODE                  ${PJT_FMWR_CODE}                                /* Project Firmware Code */
 
-#define TIMER_HW_COUNTER_WIDTH      ${.vars["${TMR_PLIB_CONNECTED?lower_case}"].TIMER_WIDTH}
+#define DV_START_OF_FRAME           0x03                                            /* Start Frame Byte */
+#define DV_END_OF_FRAME             0xFC                                            /* End Frame Byte */
+#define DV_RX_CMD_MIN_SIZE          3                                               /* Minimun number of byte in a RX command */
 
-#define TIMER_IRQ_NUMBER            ${.vars["${TMR_PLIB_CONNECTED?lower_case}"].IRQ_ENUM_NAME}
+#define TIMER_IRQ_NUMBER            ${.vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].IRQ_ENUM_NAME}
 
 extern volatile bool timer_expired;
 
@@ -114,11 +112,11 @@ typedef void (*DVRT_TMR_PLIB_STOP)(void);
 typedef void (*DVRT_TMR_PLIB_CALLBACK)(uint32_t status, uintptr_t context);
 typedef void (*DVRT_TMR_PLIB_CALLBACK_REGISTER)( DVRT_TMR_PLIB_CALLBACK callback, uintptr_t context);
 
-#if (TIMER_HW_COUNTER_WIDTH == 16)
+<#if .vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].TIMER_WIDTH == 16 >
 typedef void (*DVRT_TMR_PLIB_PERIOD_SET)(uint16_t period);
-#else
+<#else>
 typedef void (*DVRT_TMR_PLIB_PERIOD_SET)(uint32_t period);
-#endif
+</#if>
 
 typedef struct
 {
