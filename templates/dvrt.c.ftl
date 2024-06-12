@@ -53,35 +53,30 @@
 // *****************************************************************************
 // *****************************************************************************
 
-DVRT_error_t error;
-
-/**
-  Section: Driver Interface
-*/
-void DVRT_UART_RX_CallBack(void);
-void DVRT_HandleCommand(void);
-void DVRT_UART_WriteByte(uint8_t);
-void DVRT_WritePacket(void);
-void DVRT_Error_Callback(void);
-
 //------------------------------------------------------------------------------
 /**
   Section: Variables
 */
-volatile bool timer_expired=0;
-volatile uint8_t rxBufPtr, tickCounter;
-uint16_t DVStreamInterval, DVStreamInterval_Counter;
-uint16_t DVCmdInterval, DVCmdInterval_Counter;
+<#if DVRT_CALLBACK_PROCESS == "Polling">
+static bool timer_expired = false;
+</#if>
 
-DVRT_VariablePointerTableEntry_t DVPMT[DYNAMIC_VAR_PTR_COUNT];      /* Dynamic Variable Pointer Monitor Array */
+static volatile uint8_t rxBufPtr;
+static uint8_t tickCounter, temp_buffer;
+static uint16_t DVStreamInterval, DVStreamInterval_Counter;
+static uint16_t DVCmdInterval, DVCmdInterval_Counter;
 
+static DVRT_VariablePointerTableEntry_t DVPMA[DYNAMIC_VAR_PTR_COUNT];      /* Dynamic Variable Pointer Monitor Array */
+
+<#if DVRT_CALLBACK_PROCESS == "Polling">
 static TIMER_IRQ_Data TimerIrqData =
 {
     .hwTimerIntNum = TIMER_IRQ_NUMBER,
     .irq_Status = false
 };
+</#if>
 
-volatile union DVCmds
+static volatile union DVCmds
 {
     DVRT_StreamUpdates_t stream;
     DVRT_VariableUpdate_t Var;
@@ -90,21 +85,22 @@ volatile union DVCmds
     uint8_t DVCmdArray[sizeof (DVRT_StreamUpdates_t)];
 } DVRT_ReceivedCmd;
 
-struct flagS{
+static struct flagS{
     unsigned streamOn   : 1;    /* Streaming On */
     unsigned osr        : 1;    /* One shot reading */
     unsigned ping       : 1;    /* Ping target microcontroller */
 }DVflag;
 
-void DVRT_WritePacket(void)
+size_t DVRT_WritePacket(void)
 {
-    uint8_t index, var_size, wrIndex=0;
+    uint8_t index, var_size;
     uint8_t write_buffer[100];
-
+	size_t wrIndex=0U, nBytesWritten  = 0U;
+	
     write_buffer[wrIndex++] = DV_START_OF_FRAME;
     write_buffer[wrIndex++] = tickCounter++;
 
-    if(DVflag.ping)
+    if(DVflag.ping != 0U)
     {
         write_buffer[wrIndex++] = (uint8_t)(DV_FW_CODE);
         write_buffer[wrIndex++] = (uint8_t)(DV_FW_CODE>>8);
@@ -113,18 +109,83 @@ void DVRT_WritePacket(void)
     {
         for (index = 0; index < DYNAMIC_VAR_PTR_COUNT; index++)
         {
-            for (var_size = 0; var_size < DVPMT[index].size; var_size++)
+            for (var_size = 0; var_size < DVPMA[index].size; var_size++)
             {
-                write_buffer[wrIndex++] = *(DVPMT[index].address + var_size);
+                write_buffer[wrIndex++] = *(DVPMA[index].address + var_size);
             }
         }
     }
 
     write_buffer[wrIndex++] = DV_END_OF_FRAME;
-    dvrt_USARTPlibAPI.write_t((uint8_t*)write_buffer, wrIndex);
+    nBytesWritten = dvrt_USARTPlibAPI.write_t((uint8_t*)write_buffer, wrIndex);
+	
+	return nBytesWritten;
 }
 
-void TMR_Callback_Handler(uint8_t status, uintptr_t context)
+void DVRT_Process(void)
+{
+<#if DVRT_CALLBACK_PROCESS == "Interrupt">
+    if(dvrt_USARTPlibAPI.errorGet() != 0U)
+    {
+        rxBufPtr = 0;
+        return;
+    }
+
+    if(DVCmdInterval_Counter++ >= DVCmdInterval)
+    {
+        DVCmdInterval_Counter = 0;
+        DVRT_HandleCommand();
+    }
+
+    if(DVStreamInterval_Counter++ >= DVStreamInterval)
+    {
+        DVStreamInterval_Counter = 0;
+        if(DVflag.streamOn == 1U)
+        {
+            (void)DVRT_WritePacket();
+        }
+    }
+
+    if((DVflag.osr == 1U)||(DVflag.ping == 1U))           // One shot reading or ping command execution
+    {   DVflag.osr = 0;
+        DVflag.ping = 0;
+        DVflag.streamOn = 0;                // stop streaming
+    }
+<#elseif DVRT_CALLBACK_PROCESS == "Polling">
+    if( timer_expired == true)
+    {
+        if(dvrt_USARTPlibAPI.errorGet() != 0U)
+        {
+            rxBufPtr = 0;
+            return;
+        }
+
+        if(DVCmdInterval_Counter >= DVCmdInterval)
+        {
+            DVCmdInterval_Counter = 0;
+            DVRT_HandleCommand();
+        }
+
+        if(DVStreamInterval_Counter >= DVStreamInterval)
+        {
+            DVStreamInterval_Counter = 0;
+            if(DVflag.streamOn == 1U)
+            {
+                (void)DVRT_WritePacket();
+            }
+        }
+
+        if((DVflag.osr == 1U)||(DVflag.ping == 1U))           // One shot reading or ping command execution
+        {   DVflag.osr = 0;
+            DVflag.ping = 0;
+            DVflag.streamOn = 0;                // stop streaming
+        }
+        timer_expired =0;
+    }
+</#if>
+}
+
+static void DVRT_TMR_Callback_Handler(uint32_t status, uintptr_t context)
 {
 <#if DVRT_CALLBACK_PROCESS == "Interrupt">
     DVRT_Process();
@@ -136,6 +197,36 @@ void TMR_Callback_Handler(uint8_t status, uintptr_t context)
 </#if>
 }
 
+static size_t DVRT_UART_RX_CallBack_handler(uintptr_t context)
+{
+	uint32_t nUnreadBytesAvailable;
+	size_t nBytesRead = 0U;
+	
+	nUnreadBytesAvailable = dvrt_USARTPlibAPI.readCountGet();
+	
+<#if CONNECTED_PLIB_NAME?? && CONNECTED_PLIB_NAME == "FLEXCOM">
+    if(dvrt_USARTPlibAPI.errorGet() != ${CONNECTED_PLIB_NAME}_USART_ERROR_NONE)
+<#elseif CONNECTED_PLIB_NAME?? && ((CONNECTED_PLIB_NAME == "UART") || (CONNECTED_PLIB_NAME == "DBGU"))>
+    if(dvrt_USARTPlibAPI.errorGet() != ${CONNECTED_PLIB_NAME}_ERROR_NONE)
+<#else>
+    if(dvrt_USARTPlibAPI.errorGet() != USART_ERROR_NONE)
+</#if>
+    {
+        rxBufPtr = 0;
+    }
+    else
+    {
+        if(nUnreadBytesAvailable != 0U)
+        {
+            nBytesRead = dvrt_USARTPlibAPI.read_t(&temp_buffer, 1U);
+			DVRT_ReceivedCmd.DVCmdArray[rxBufPtr++] = temp_buffer;
+        }
+    }
+    DVCmdInterval_Counter = 0;
+	return nBytesRead;
+}
+
+<#if DVRT_CALLBACK_PROCESS == "Polling">
 void DVRT_Disable(void)
 {
 <#if core.CoreArchitecture?contains("CORTEX-M")>
@@ -161,32 +252,7 @@ void DVRT_Enable(void)
     EVIC_INT_SourceRestore(TimerIrqData.hwTimerIntNum, TimerIrqData.irq_Status);
 </#if>
 }
-
-<#if CONNECTED_PLIB_NAME?? && ((CONNECTED_PLIB_NAME == "UART") || (CONNECTED_PLIB_NAME == "DBGU") || (CONNECTED_PLIB_NAME == "USART"))>
-void UART_RX_CallBack_handler(${CONNECTED_PLIB_NAME}_EVENT event, uintptr_t context)
-<#else>
-void UART_RX_CallBack_handler(${CONNECTED_PLIB_NAME}_USART_EVENT event, uintptr_t context)
 </#if>
-{
-<#if CONNECTED_PLIB_NAME?? && CONNECTED_PLIB_NAME == "FLEXCOM">
-    if(dvrt_USARTPlibAPI.errorGet() != ${CONNECTED_PLIB_NAME}_USART_ERROR_NONE)
-<#elseif CONNECTED_PLIB_NAME?? && ((CONNECTED_PLIB_NAME == "UART") || (CONNECTED_PLIB_NAME == "DBGU"))>
-    if(dvrt_USARTPlibAPI.errorGet() != ${CONNECTED_PLIB_NAME}_ERROR_NONE)
-<#else>
-    if(dvrt_USARTPlibAPI.errorGet() != USART_ERROR_NONE)
-</#if>
-    {
-        rxBufPtr = 0;
-    }
-    else
-    {
-        if(dvrt_USARTPlibAPI.readCountGet() != 0)
-        {
-            dvrt_USARTPlibAPI.read_t((uint8_t*)&DVRT_ReceivedCmd.DVCmdArray[rxBufPtr++], 1);
-        }
-    }
-    DVCmdInterval_Counter = 0;
-}
 
 void DVRT_Initialize(void)
 {
@@ -194,8 +260,8 @@ void DVRT_Initialize(void)
 
     for (index = 0; index < DYNAMIC_VAR_PTR_COUNT; index++)
     {
-        DVPMT[index].address = 0;
-        DVPMT[index].size = 0;
+        DVPMA[index].address = NULL;
+        DVPMA[index].size = 0;
     }
 
     DVflag.streamOn = 1;
@@ -204,91 +270,35 @@ void DVRT_Initialize(void)
 
     dvrt_USARTPlibAPI.readThresholdSet(1);
     dvrt_USARTPlibAPI.readNotificationEnable(true, false);
-    dvrt_USARTPlibAPI.readCallbackRegister((DVRT_USART_PLIB_CALLBACK)UART_RX_CallBack_handler, (uintptr_t)NULL);
-    dvrt_TMRPlibAPI.timerCallbackRegister((DVRT_TMR_PLIB_CALLBACK)TMR_Callback_Handler, (uintptr_t)NULL);
+    dvrt_USARTPlibAPI.readCallbackRegister((DVRT_USART_PLIB_CALLBACK)DVRT_UART_RX_CallBack_handler, (uintptr_t)0U);
+    dvrt_TMRPlibAPI.timerCallbackRegister((DVRT_TMR_PLIB_CALLBACK)DVRT_TMR_Callback_Handler, (uintptr_t)0U);
     dvrt_TMRPlibAPI.timerStart();
-}
-
-void DVRT_Process(void)
-{
-<#if DVRT_CALLBACK_PROCESS == "Interrupt">
-    if(dvrt_USARTPlibAPI.errorGet())
-    {
-        rxBufPtr = 0;
-        return;
-    }
-
-    if(DVCmdInterval_Counter++ >= DVCmdInterval)
-    {
-        DVCmdInterval_Counter = 0;
-        DVRT_HandleCommand();
-    }
-
-    if(DVStreamInterval_Counter++ >= DVStreamInterval)
-    {
-        DVStreamInterval_Counter = 0;
-        if(DVflag.streamOn)
-        {
-            DVRT_WritePacket();
-        }
-    }
-
-    if(DVflag.osr || DVflag.ping)           // One shot reading or ping command execution
-    {   DVflag.osr = 0;
-        DVflag.ping = 0;
-        DVflag.streamOn = 0;                // stop streaming
-    }
-<#elseif DVRT_CALLBACK_PROCESS == "Polling">
-    if( timer_expired == 1)
-    {
-        if(dvrt_USARTPlibAPI.errorGet())
-        {
-            rxBufPtr = 0;
-            return;
-        }
-
-        if(DVCmdInterval_Counter++ >= DVCmdInterval)
-        {
-            DVCmdInterval_Counter = 0;
-            DVRT_HandleCommand();
-        }
-
-        if(DVStreamInterval_Counter++ >= DVStreamInterval)
-        {
-            DVStreamInterval_Counter = 0;
-            if(DVflag.streamOn)
-            {
-                DVRT_WritePacket();
-            }
-        }
-
-        if(DVflag.osr || DVflag.ping)           // One shot reading or ping command execution
-        {   DVflag.osr = 0;
-            DVflag.ping = 0;
-            DVflag.streamOn = 0;                // stop streaming
-        }
-        timer_expired =0;
-    }
-</#if>
 }
 
 void DVRT_HandleCommand(void)
 {
-    uint8_t VARcount;
+    uint8_t VARcount, StartOfFrame, EndOfFrame;
+	uint8_t index;
+	DVRT_commands command_type;
 
     if(rxBufPtr >= DV_RX_CMD_MIN_SIZE)
     {
-        if((DVRT_ReceivedCmd.DVCmdArray[0] == DV_START_OF_FRAME) && (DVRT_ReceivedCmd.DVCmdArray[rxBufPtr-1] == DV_END_OF_FRAME))
+		StartOfFrame = DVRT_ReceivedCmd.DVCmdArray[0];
+        index = rxBufPtr-1U;
+        EndOfFrame = DVRT_ReceivedCmd.DVCmdArray[index];
+		
+        if((StartOfFrame == DV_START_OF_FRAME) && (EndOfFrame == DV_END_OF_FRAME))
         {
-            switch (DVRT_ReceivedCmd.stream.command)
+            command_type = (DVRT_commands)DVRT_ReceivedCmd.stream.command;
+            switch (command_type)
             {
                 case UPDATE_VARIABLE_POINTER_TABLE:
                 {
                     VARcount = 0;
                     while (VARcount < DVRT_ReceivedCmd.stream.size)
                     {
-                        DVPMT[VARcount].size = DVRT_ReceivedCmd.stream.DVPMT[VARcount].size;
-                        DVPMT[VARcount].address = DVRT_ReceivedCmd.stream.DVPMT[VARcount].address;
+                        DVPMA[VARcount].size = DVRT_ReceivedCmd.stream.DVPMT[VARcount].size;
+                        DVPMA[VARcount].address = DVRT_ReceivedCmd.stream.DVPMT[VARcount].address;
                         VARcount++;
                     }
                     break;
@@ -297,13 +307,13 @@ void DVRT_HandleCommand(void)
                 {
                     VARcount = 0;
                 <#if core.CoreArchitecture == "MIPS" >
-                    EVIC_INT_Disable();
+                    (void)EVIC_INT_Disable();
                 <#elseif ((core.CoreArchitecture?contains("ARM")) || (core.CoreArchitecture?contains("CORTEX-A5")))>
-                    AIC_INT_IrqDisable();
+                    (void)AIC_INT_IrqDisable();
                 <#elseif core.CoreArchitecture?contains("CORTEX-M")>
-                    NVIC_INT_Disable();
+                    (void)NVIC_INT_Disable();
                 <#else>
-                    GIC_INT_IrqDisable();
+                    (void)GIC_INT_IrqDisable();
                 </#if>
                     while (VARcount < DVRT_ReceivedCmd.Var.variablePointerTableSize)
                     {
@@ -352,6 +362,9 @@ void DVRT_HandleCommand(void)
                         DVStreamInterval_Counter = DVStreamInterval;
                         break;
                 }
+				default:
+						/* Do nothing */
+                        break;   
             }
         }
     }

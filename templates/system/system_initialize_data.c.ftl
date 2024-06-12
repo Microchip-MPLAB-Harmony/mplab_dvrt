@@ -20,8 +20,8 @@ const DVRT_TMR_PLIB_INTERFACE dvrt_TMRPlibAPI = {
     .timerStart = (DVRT_TMR_PLIB_START)${.vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].TIMER_START_API_NAME},
 
     .timerStop = (DVRT_TMR_PLIB_STOP)${.vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].TIMER_STOP_API_NAME},
-
-    .timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)${.vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].PERIOD_SET_API_NAME},
+	
+	.timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)NULL,
 
     .timerCallbackRegister = (DVRT_TMR_PLIB_CALLBACK_REGISTER)${.vars["${TMR_PLIB_COMPONENT_CONNECTED?lower_case}"].CALLBACK_API_NAME}
 };

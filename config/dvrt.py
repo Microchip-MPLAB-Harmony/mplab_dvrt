@@ -43,9 +43,15 @@ def handleMessage(messageID, args):
     if  messageID == "DVRT_PLIB_CAPABILITY":
         if args["plib_mode"] == "PERIOD_MODE":
             if dvrt_tmrPLIB.getValue() == "CORE_TIMER":
-                result_dict.update({"TIMER_MODE": "DVRT_PLIB_MODE_PERIOD", "dvrt_tick_millisec": 0.1})          
+                result_dict.update({"TIMER_MODE": "DVRT_PLIB_MODE_PERIOD", "dvrt_tick_millisec": 1})   
+                dvrt_TickRateMs.setVisible(False)
+                dvrt_AchievableTickRateMsComment.setVisible(False)
             else:   
-                result_dict.update({"TIMER_MODE": "DVRT_PLIB_MODE_PERIOD", "dvrt_tick_microsec": 100})
+                result_dict.update({"TIMER_MODE": "DVRT_PLIB_MODE_PERIOD", "dvrt_tick_millisec": 1})
+                dvrt_TickRateMs.setReadOnly(True)
+                dvrt_TickRateMs.setReadOnly(False)
+                dvrt_TickRateMs.setVisible(True)
+                dvrt_AchievableTickRateMsComment.setVisible(True)
                 
     elif messageID == "DVRT_SYS_TICK_PLIB_CAPABILITY":                                                  
         dvrt_TickRateMs.setVisible(True)
@@ -89,7 +95,8 @@ def onAttachmentConnected(source, target):
         plibUsed.setValue(remoteID.upper())
         #Request PLIB to publish it's capabilities
         plib_Dict = Database.sendMessage(remoteID, "DVRT_PUBLISH_CAPABILITIES", dvrtDict)
-
+        
+        
 def onAttachmentDisconnected(source, target):
     global plibUsed
 
@@ -114,7 +121,8 @@ def onAttachmentDisconnected(source, target):
     elif ((connectID == "TMR") or (connectID == "core_timer")):
         plibUsed = localComponent.getSymbolByID("TMR_PLIB_COMPONENT_CONNECTED")
         plibUsed.clearValue()
-
+        
+        
 def destroyComponent(dvrtComponent):
     Database.sendMessage("HarmonyCore", "ENABLE_SYS_COMMON", {"isEnabled":False})
     if dvrtComponent.getSymbolByID("DVRT_USE_SYSTICK").getValue() == True:
@@ -157,8 +165,8 @@ def onUsingSystickChange(symbol, event):
             localComponent.setDependencyEnabled("TMR", True)
             #Let sys_tick PLIB know that DVRT no longer uses sys_tick PLIB
             Database.sendMessage("core", "DVRT_PUBLISH_CAPABILITIES", {"ID":"None"})
-            dvrt_TickRateMs.setVisible(False)
-            dvrt_AchievableTickRateMsComment.setVisible(False)
+            #dvrt_AchievableTickRateMsComment.setValue(False)
+            dvrt_AchievableTickRateHz.setValue(0)
     elif event["id"] == "SYSTICK_BUSY":
         if event["value"] == False:
             localComponent.getSymbolByID("DVRT_USE_SYSTICK").setVisible(True)
@@ -177,7 +185,7 @@ def Dvrt_SysTickRateCallback(symbol, event):
     if (event["id"] == "DVRT_TICK_RATE_MS"):
         if dvrt_tmrPLIB.getValue() != "" :
             sysTickRate["dvrt_tick_ms"] = float(symbol.getValue())
-            dummyDict = Database.sendMessage(dvrt_tmrPLIB.getValue(), "DVRT_TICK_RATE_CHANGED", sysTickRate)            
+            dummyDict = Database.sendMessage(dvrt_tmrPLIB.getValue().lower(), "DVRT_TICK_RATE_CHANGED", sysTickRate)            
             
 def Dvrt_AchievableTickRateMsCallback(symbol, event):
 
@@ -242,9 +250,9 @@ def instantiateComponent(dvrtComponent):
     dvrt_TickRateMs.setLabel("Tick Rate (ms)")
     dvrt_TickRateMs.setHelp(dvrt_mcc_helpkeyword)
     dvrt_TickRateMs.setMax(5000)          #5 seconds
-    dvrt_TickRateMs.setMin(0.1)           #100 usec
-    dvrt_TickRateMs.setDefaultValue(0.1)
-    dvrt_TickRateMs.setVisible(False)
+    dvrt_TickRateMs.setMin(0.1)           #0.1 msec
+    dvrt_TickRateMs.setDefaultValue(1)
+    dvrt_TickRateMs.setVisible(True)
     dvrt_TickRateMs.setDependencies(Dvrt_SysTickRateCallback, ["DVRT_TICK_RATE_MS"])
     
     dvrt_AchievableTickRateHz = dvrtComponent.createLongSymbol("DVRT_ACHIEVABLE_TICK_RATE_HZ", None)        
@@ -253,7 +261,7 @@ def instantiateComponent(dvrtComponent):
     
     dvrt_AchievableTickRateMsComment = dvrtComponent.createCommentSymbol("DVRT_ACHIEVABLEE_TICK_RATE_COMMENT", None)                                    
     dvrt_AchievableTickRateMsComment.setLabel("Achievable Tick Rate Resolution (ms):" + str(dvrt_AchievableTickRateHz.getValue()) + "ms")
-    dvrt_AchievableTickRateMsComment.setVisible(False)
+    dvrt_AchievableTickRateMsComment.setVisible(True)
     dvrt_AchievableTickRateMsComment.setDependencies(Dvrt_AchievableTickRateMsCallback, ["DVRT_ACHIEVABLE_TICK_RATE_HZ"])
     
     #DVRT Run Process
@@ -282,7 +290,7 @@ def instantiateComponent(dvrtComponent):
     dvrt_dynamic_variable_count.setHelp(dvrt_mcc_helpkeyword)
     dvrt_dynamic_variable_count.setDefaultValue(8)
     dvrt_dynamic_variable_count.setMin(1)
-    dvrt_dynamic_variable_count.setMax(256)
+    dvrt_dynamic_variable_count.setMax(32)
 
     #Communication Protocol
     dvrt_Instancetype = dvrtComponent.createStringSymbol("COMM_PROTOCOL", None)
@@ -309,8 +317,8 @@ def instantiateComponent(dvrtComponent):
     dvrtMainSourceFile = dvrtComponent.createFileSymbol("DVRT_FILE_SRC_MAIN", None)
     dvrtMainSourceFile.setSourcePath("templates/dvrt.c.ftl")
     dvrtMainSourceFile.setOutputName(dvrtComponent.getID().lower()+".c")
-    dvrtMainSourceFile.setDestPath("library/dvrt/")
-    dvrtMainSourceFile.setProjectPath("config/" + configName + "/library/dvrt/")
+    dvrtMainSourceFile.setDestPath("dvrt/")
+    dvrtMainSourceFile.setProjectPath("config/" + configName + "/dvrt/")
     dvrtMainSourceFile.setType("SOURCE")
     dvrtMainSourceFile.setMarkup(True)
 
@@ -318,11 +326,20 @@ def instantiateComponent(dvrtComponent):
     dvrtInstHeaderFile = dvrtComponent.createFileSymbol("DVRT_FILE_MAIN_HEADER", None)
     dvrtInstHeaderFile.setSourcePath("templates/dvrt.h.ftl")
     dvrtInstHeaderFile.setOutputName(dvrtComponent.getID().lower()+".h")
-    dvrtInstHeaderFile.setDestPath("library/dvrt/")
-    dvrtInstHeaderFile.setProjectPath("config/" + configName + "/library/dvrt/")
+    dvrtInstHeaderFile.setDestPath("dvrt/")
+    dvrtInstHeaderFile.setProjectPath("config/" + configName + "/dvrt/")
     dvrtInstHeaderFile.setType("HEADER")
     dvrtInstHeaderFile.setMarkup(True)
 
+    #DVRT Local Header File
+    dvrtInstLocalHeaderFile = dvrtComponent.createFileSymbol("DVRT_FILE_MAIN_LOCAL_HEADER", None)
+    dvrtInstLocalHeaderFile.setSourcePath("templates/dvrt_local.h.ftl")
+    dvrtInstLocalHeaderFile.setOutputName(dvrtComponent.getID().lower()+"_local.h")
+    dvrtInstLocalHeaderFile.setDestPath("dvrt/")
+    dvrtInstLocalHeaderFile.setProjectPath("config/" + configName + "/dvrt/")
+    dvrtInstLocalHeaderFile.setType("HEADER")
+    dvrtInstLocalHeaderFile.setMarkup(True)
+    
     #DVRT Initialize data
     dvrtSystemInitFile = dvrtComponent.createFileSymbol("DVRT_FILE_SYS_INIT", None)
     dvrtSystemInitFile.setType("STRING")

@@ -1,1 +1,1 @@
-#include "library/dvrt/${DVRT_MODULE?lower_case}.h"
+#include "dvrt/${DVRT_MODULE?lower_case}.h"

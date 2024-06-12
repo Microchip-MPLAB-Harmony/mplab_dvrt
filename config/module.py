@@ -26,8 +26,9 @@ def loadModule():
     print("Load Module: DVRT")
     coreArch = ATDF.getNode( "/avr-tools-device-file/devices/device" ).getAttribute( "architecture" )
     
-    dvrt_Component = Module.CreateComponent("dvrt", "DVRT", "/Libraries/", "/config/dvrt.py")
+    dvrt_Component = Module.CreateComponent("dvrt", "DVRT", "/Tools/", "/config/dvrt.py")
     dvrt_Component.setDisplayType("DATA VISUALIZER")
     dvrt_Component.addDependency("UART", "UART", False)
     dvrt_Component.addDependency("TMR", "TMR", False)
-    dvrt_Component.addCapability("SYS_TICK", "SYS_TICK", True)
+    
+    
