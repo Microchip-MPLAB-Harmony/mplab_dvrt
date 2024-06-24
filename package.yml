@@ -1,13 +1,14 @@
 package:
   format-version: "1.0.0"
-  name: "replaceme"
+  name: "mplab_dvrt"
   type: "api"
-  status: "beta"
-  required: false
-  version: "1.0.0"
+  status: "production"
+  required: true
+  version: "v3.0.0"
 
   dependencies:
     - name: "csp"
       type: "package"
-      version: "3.14.0"
+      version: "3.19.1"
+    
 
