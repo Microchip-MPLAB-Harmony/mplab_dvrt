@@ -1,0 +1,4 @@
+{"summary": "MisraMacro", "data": [{"name": "EVSYS_H", "used": false, "file": "../src/config/sam_d21_xpro/peripheral/evsys/plib_evsys.h", "line": 42, "column": 0}]}
+{"summary": "MisraExternalIdentifiers", "data": [{"name": "EVSYS_Initialize", "file": "../src/config/sam_d21_xpro/peripheral/evsys/plib_evsys.c", "line": 45, "column": 6, "decl": false}]}
+{"summary": "MisraInternalIdentifiers", "data": []}
+{"summary": "MisraLocalIdentifiers", "data": []}
