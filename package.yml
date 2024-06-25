@@ -4,11 +4,11 @@ package:
   type: "api"
   status: "production"
   required: true
-  version: "v3.0.0"
+  version: "v1.0.0"
 
   dependencies:
     - name: "csp"
       type: "package"
-      version: "3.19.1"
-    
+      version: "v3.19.1"
+
 

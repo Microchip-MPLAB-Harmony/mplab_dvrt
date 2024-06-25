@@ -39,8 +39,6 @@ The following applications are provided to demonstrate the typical usage models 
 ____
 
 [![License](https://img.shields.io/badge/license-Harmony%20license-orange.svg)](https://github.com/Microchip-MPLAB-Harmony/mplab_dvrt/blob/master/mplab_harmony_license.md)
-[![Latest release](https://img.shields.io/github/release/Microchip-MPLAB-Harmony/mplab_dvrt.svg)](https://github.com/Microchip-MPLAB-Harmony/mplab_dvrt/releases/latest)
-[![Latest release date](https://img.shields.io/github/release-date/Microchip-MPLAB-Harmony/mplab_dvrt.svg)](https://github.com/Microchip-MPLAB-Harmony/mplab_dvrt/releases/latest)
 [![Commit activity](https://img.shields.io/github/commit-activity/y/Microchip-MPLAB-Harmony/mplab_dvrt.svg)](https://github.com/Microchip-MPLAB-Harmony/mplab_dvrt/graphs/commit-activity)
 [![Contributors](https://img.shields.io/github/contributors-anon/Microchip-MPLAB-Harmony/mplab_dvrt.svg)]()
 

@@ -1,23 +1,4 @@
 /*******************************************************************************
-  DVRT Source File
-
-  Company
-    Microchip Technology Inc.
-
-  File Name
-    ${DVRT_MODULE?lower_case}.h
-
-  Summary
-    Data Visualizer interface.
-
-  Description
-
-  Remarks:
-
-*******************************************************************************/
-
-
-/*******************************************************************************
 * Copyright (C) 2024 Microchip Technology Inc. and its subsidiaries.
 *
 * Subject to your compliance with these terms, you may use Microchip software

@@ -11,7 +11,7 @@ Added DVRT support for MCUs and MPU devices.
 ### Device Support
 The following table provides information on DVRT support for MCUs and MPUs.
 
-	| Product Family      | TC_u2212  |  TC_u2249  | TC_6082  |  TC_44162  |  TMR_02815  |  TMR1_02141 |   TMR_00745  |  TMR1_00687  |  Systick  |  Coretimer  |
+    | Product Family      | TC_u2212  |  TC_u2249  | TC_6082  |  TC_44162  |  TMR_02815  |  TMR1_02141 |   TMR_00745  |  TMR1_00687  |  Systick  |  Coretimer  |
     | --------------------| --------- | ---------- |--------- | ---------- | ----------- | ----------- |  ----------- | ------------ | --------- | ----------- |
     | SAM C20/C21         |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
     | SAM D10             |   Yes     |            |          |            |             |             |              |              |    Yes    |             |
@@ -41,12 +41,12 @@ The following table provides information on DVRT support for MCUs and MPUs.
     | SAM 9X6             |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
     | SAM A5D2            |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
     | SAM A7G5            |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
-    | PIC32MZ DA 	      |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
-	| PIC32MZ EF 	      |           |            |          |            |             |             |     Yes      |     Yes      |           |     Yes     |
-	| PIC32MZ-W1          |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
-	| PIC32MK             |           |            |          |            |     Yes     |     Yes     |              |              |           |     Yes     |
-	| PIC32MM             |           |            |          |            |             |             |     Yes      |              |           |     Yes     |
-	| PIC32MX             |           |            |          |            |             |     Yes     |     Yes      |     Yes      |           |     Yes     |
+    | PIC32MZ DA          |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
+    | PIC32MZ EF          |           |            |          |            |             |             |     Yes      |     Yes      |           |     Yes     |
+    | PIC32MZ-W1          |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
+    | PIC32MK             |           |            |          |            |     Yes     |     Yes     |              |              |           |     Yes     |
+    | PIC32MM             |           |            |          |            |             |             |     Yes      |              |           |     Yes     |
+    | PIC32MX             |           |            |          |            |             |     Yes     |     Yes      |     Yes      |           |     Yes     |
 
 ### Known Issues
 
