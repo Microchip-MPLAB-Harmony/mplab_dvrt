@@ -1,4 +1,0 @@
-{"summary": "MisraMacro", "data": [{"name": "PLIB_CLOCK_H", "used": false, "file": "../src/config/sam_d21_xpro/peripheral/clock/plib_clock.h", "line": 43, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": [{"name": "CLOCK_Initialize", "file": "../src/config/sam_d21_xpro/peripheral/clock/plib_clock.h", "line": 76, "column": 6, "decl": true}]}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": []}

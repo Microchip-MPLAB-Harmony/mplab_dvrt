@@ -14,8 +14,8 @@ harmony_version: v1.5.2
 compiler: XC32 4.35
 
 modules:
-    - {name: "csp", version: "fix_coretimer_dvrt"}
-    - {name: "mplab_dvrt", version: "dvrt_support"}
+    - {name: "csp", version: "v3.19.1"}
+    - {name: "mplab_dvrt", version: "v3.0.0"}
 
 packs:
     - {name: "PIC32MK-MC_DFP", version: "1.11.151"}

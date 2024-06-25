@@ -18,5 +18,5 @@ device_library: {library_class: com.microchip.mcc.harmony.Harmony3Library, name:
     V3, version: 1.5.2}
 packs: {name: PIC32MK-MC_DFP, version: 1.11.151}
 modules:
-- {name: csp, type: HARMONY, version: fix_coretimer_dvrt}
-- {name: mplab_dvrt, type: HARMONY, version: dvrt_support}
+- {name: csp, type: HARMONY, version: v3.19.1}
+- {name: mplab_dvrt, type: HARMONY, version: v3.0.0}

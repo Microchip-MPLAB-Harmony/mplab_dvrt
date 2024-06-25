@@ -1,5 +1,0 @@
-{"summary": "MisraTypedefInfo", "data": [{"name": "Ptc", "file": "../src/packs/ATSAMD21J18A_DFP/component/ptc.h", "line": 35, "column": 14, "used": false}]}
-{"summary": "MisraMacro", "data": [{"name": "_SAMD21_PTC_COMPONENT_H_", "used": false, "file": "../src/packs/ATSAMD21J18A_DFP/component/ptc.h", "line": 25, "column": 0}]}
-{"summary": "MisraExternalIdentifiers", "data": []}
-{"summary": "MisraInternalIdentifiers", "data": []}
-{"summary": "MisraLocalIdentifiers", "data": []}
