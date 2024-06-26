@@ -3,7 +3,7 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
-## MPLAB-DVRT Release v3.0.0
+## MPLAB-DVRT Release v1.0.0
 
 ### New features
 Added DVRT support for MCUs and MPU devices.
