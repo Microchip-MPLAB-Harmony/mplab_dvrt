@@ -2824,15 +2824,15 @@
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\dvrt\dvrt.c</file>
-         <hash>704118b238c26ed07dbf4dd3282bbf51d927a504929149ec0c695d0354b1ecc6</hash>
+         <hash>7ead4d808d471e205c923a6016ed08c1dad90815e581a6a6b21e45715f3095ec</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\dvrt\dvrt.h</file>
-         <hash>2a2c396b5463e5a40fcd1a39b6c3e63743d18257e1d9d590cf30358374a50aa8</hash>
+         <hash>a243e7338bda9faa6e33bc1e597ca27a48f754f2c65439e287257228c70e4bb8</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\dvrt\dvrt_local.h</file>
-         <hash>22394a9855c80dae7d8e3d6c0864c4aa972fd7771b35fc0afd4d051b8817a117</hash>
+         <hash>41701993f360486d17544d14bc029fc9a08b6ced7f8533fd3f9810f039867665</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\exceptions.c</file>
@@ -2840,7 +2840,7 @@
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\initialization.c</file>
-         <hash>219bc5157614c2eda84c2ef77aa21111008274a806688d2fe73f6d8badef372a</hash>
+         <hash>5b445ed1608a29131cf342e18b63b11a08b1867722e68d9c527dfbbba41b288f</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\interrupts.c</file>

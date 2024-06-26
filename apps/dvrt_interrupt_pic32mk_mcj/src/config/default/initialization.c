@@ -147,19 +147,19 @@
 // *****************************************************************************
 
 const DVRT_USART_PLIB_INTERFACE dvrt_USARTPlibAPI = {
-	.readCallbackRegister = (DVRT_USART_PLIB_READ_CALLBACK_REG)UART1_ReadCallbackRegister,
+    .readCallbackRegister = (DVRT_USART_PLIB_READ_CALLBACK_REG)UART1_ReadCallbackRegister,
 
-	.read_t = (DVRT_USART_PLIB_READ)UART1_Read,
-	
-	.readCountGet = (DVRT_USART_PLIB_READ_COUNT_GET)UART1_ReadCountGet,
-	
-	.write_t = (DVRT_USART_PLIB_WRITE)UART1_Write,
-	
-	.errorGet = (DVRT_USART_PLIB_ERROR_GET)UART1_ErrorGet,
-	
-	.readThresholdSet = (DVRT_USART_PLIB_READ_THRESHOLD_SET)UART1_ReadThresholdSet,
-	
-	.readNotificationEnable = (DVRT_USART_PLIB_READ_NOTIFICATION_ENABLE)UART1_ReadNotificationEnable            
+    .read_t = (DVRT_USART_PLIB_READ)UART1_Read,
+
+    .readCountGet = (DVRT_USART_PLIB_READ_COUNT_GET)UART1_ReadCountGet,
+
+    .write_t = (DVRT_USART_PLIB_WRITE)UART1_Write,
+
+    .errorGet = (DVRT_USART_PLIB_ERROR_GET)UART1_ErrorGet,
+
+    .readThresholdSet = (DVRT_USART_PLIB_READ_THRESHOLD_SET)UART1_ReadThresholdSet,
+
+    .readNotificationEnable = (DVRT_USART_PLIB_READ_NOTIFICATION_ENABLE)UART1_ReadNotificationEnable
 
 };
 
@@ -167,8 +167,8 @@ const DVRT_TMR_PLIB_INTERFACE dvrt_TMRPlibAPI = {
     .timerStart = (DVRT_TMR_PLIB_START)TMR2_Start,
 
     .timerStop = (DVRT_TMR_PLIB_STOP)TMR2_Stop ,
-	
-	.timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)NULL,
+
+    .timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)NULL,
 
     .timerCallbackRegister = (DVRT_TMR_PLIB_CALLBACK_REGISTER)TMR2_CallbackRegister
 };

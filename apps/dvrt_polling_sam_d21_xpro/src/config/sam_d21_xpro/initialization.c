@@ -113,19 +113,19 @@
 // *****************************************************************************
 
 const DVRT_USART_PLIB_INTERFACE dvrt_USARTPlibAPI = {
-	.readCallbackRegister = (DVRT_USART_PLIB_READ_CALLBACK_REG)SERCOM3_USART_ReadCallbackRegister,
+    .readCallbackRegister = (DVRT_USART_PLIB_READ_CALLBACK_REG)SERCOM3_USART_ReadCallbackRegister,
 
-	.read_t = (DVRT_USART_PLIB_READ)SERCOM3_USART_Read,
-	
-	.readCountGet = (DVRT_USART_PLIB_READ_COUNT_GET)SERCOM3_USART_ReadCountGet,
-	
-	.write_t = (DVRT_USART_PLIB_WRITE)SERCOM3_USART_Write,
-	
-	.errorGet = (DVRT_USART_PLIB_ERROR_GET)SERCOM3_USART_ErrorGet,
-	
-	.readThresholdSet = (DVRT_USART_PLIB_READ_THRESHOLD_SET)SERCOM3_USART_ReadThresholdSet,
-	
-	.readNotificationEnable = (DVRT_USART_PLIB_READ_NOTIFICATION_ENABLE)SERCOM3_USART_ReadNotificationEnable            
+    .read_t = (DVRT_USART_PLIB_READ)SERCOM3_USART_Read,
+
+    .readCountGet = (DVRT_USART_PLIB_READ_COUNT_GET)SERCOM3_USART_ReadCountGet,
+
+    .write_t = (DVRT_USART_PLIB_WRITE)SERCOM3_USART_Write,
+
+    .errorGet = (DVRT_USART_PLIB_ERROR_GET)SERCOM3_USART_ErrorGet,
+
+    .readThresholdSet = (DVRT_USART_PLIB_READ_THRESHOLD_SET)SERCOM3_USART_ReadThresholdSet,
+
+    .readNotificationEnable = (DVRT_USART_PLIB_READ_NOTIFICATION_ENABLE)SERCOM3_USART_ReadNotificationEnable
 
 };
 
@@ -133,8 +133,8 @@ const DVRT_TMR_PLIB_INTERFACE dvrt_TMRPlibAPI = {
     .timerStart = (DVRT_TMR_PLIB_START)TC4_TimerStart,
 
     .timerStop = (DVRT_TMR_PLIB_STOP)TC4_TimerStop,
-	
-	.timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)NULL,
+
+    .timerPeriodSet = (DVRT_TMR_PLIB_PERIOD_SET)NULL,
 
     .timerCallbackRegister = (DVRT_TMR_PLIB_CALLBACK_REGISTER)TC4_TimerCallbackRegister
 };

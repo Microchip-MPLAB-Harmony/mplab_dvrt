@@ -23,7 +23,6 @@ This repository contains the MPLAB® Harmony 3 DVRT solutions and example applic
 | ---        | ---                                                       |
 | apps       | Example applications for DVRT library components     |
 | config     | DVRT module configuration file                       |
-| docs       | DVRT library online help documentation                      |
 
 
 # Code Examples

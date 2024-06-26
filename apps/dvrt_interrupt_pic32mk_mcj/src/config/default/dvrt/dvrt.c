@@ -1,21 +1,4 @@
 /*******************************************************************************
-  DVRT Source File
-
-  Company
-    Microchip Technology Inc.
-
-  File Name
-    dvrt.c
-
-  Summary
-    Data Visualizer interface.
-
-  Description
-
-  Remarks:
-
-*******************************************************************************/
-/*******************************************************************************
 * Copyright (C) 2024 Microchip Technology Inc. and its subsidiaries.
 *
 * Subject to your compliance with these terms, you may use Microchip software
@@ -76,21 +59,21 @@ static volatile union DVCmds
 } DVRT_ReceivedCmd;
 
 static struct flagS{
-    unsigned streamOn   : 1;    /* Streaming On */
-    unsigned osr        : 1;    /* One shot reading */
-    unsigned ping       : 1;    /* Ping target microcontroller */
+    bool streamOn;      /* Streaming On */
+    bool osr;           /* One shot reading */
+    bool ping;          /* Ping target microcontroller */
 }DVflag;
 
 size_t DVRT_WritePacket(void)
 {
     uint8_t index, var_size;
     uint8_t write_buffer[100];
-	size_t wrIndex=0U, nBytesWritten  = 0U;
-	
+    size_t wrIndex=0U, nBytesWritten  = 0U;
+
     write_buffer[wrIndex++] = DV_START_OF_FRAME;
     write_buffer[wrIndex++] = tickCounter++;
 
-    if(DVflag.ping != 0U)
+    if(DVflag.ping != false)
     {
         write_buffer[wrIndex++] = (uint8_t)(DV_FW_CODE);
         write_buffer[wrIndex++] = (uint8_t)(DV_FW_CODE>>8);
@@ -101,15 +84,15 @@ size_t DVRT_WritePacket(void)
         {
             for (var_size = 0; var_size < DVPMA[index].size; var_size++)
             {
-                write_buffer[wrIndex++] = *(DVPMA[index].address + var_size);
+                write_buffer[wrIndex++] = DVPMA[index].address[var_size];
             }
         }
     }
 
     write_buffer[wrIndex++] = DV_END_OF_FRAME;
     nBytesWritten = dvrt_USARTPlibAPI.write_t((uint8_t*)write_buffer, wrIndex);
-	
-	return nBytesWritten;
+
+    return nBytesWritten;
 }
 
 void DVRT_Process(void)
@@ -129,16 +112,16 @@ void DVRT_Process(void)
     if(DVStreamInterval_Counter++ >= DVStreamInterval)
     {
         DVStreamInterval_Counter = 0;
-        if(DVflag.streamOn == 1U)
+        if(DVflag.streamOn == true)
         {
             (void)DVRT_WritePacket();
         }
     }
 
-    if((DVflag.osr == 1U)||(DVflag.ping == 1U))           // One shot reading or ping command execution
-    {   DVflag.osr = 0;
-        DVflag.ping = 0;
-        DVflag.streamOn = 0;                // stop streaming
+    if((DVflag.osr == true)||(DVflag.ping == true))             // One shot reading or ping command execution
+    {   DVflag.osr = false;
+        DVflag.ping = false;
+        DVflag.streamOn = false;                                // stop streaming
     }
 }
 
@@ -149,11 +132,11 @@ static void DVRT_TMR_Callback_Handler(uint32_t status, uintptr_t context)
 
 static size_t DVRT_UART_RX_CallBack_handler(uintptr_t context)
 {
-	uint32_t nUnreadBytesAvailable;
-	size_t nBytesRead = 0U;
-	
-	nUnreadBytesAvailable = dvrt_USARTPlibAPI.readCountGet();
-	
+    uint32_t nUnreadBytesAvailable;
+    size_t nBytesRead = 0U;
+
+    nUnreadBytesAvailable = dvrt_USARTPlibAPI.readCountGet();
+
     if(dvrt_USARTPlibAPI.errorGet() != UART_ERROR_NONE)
     {
         rxBufPtr = 0;
@@ -163,11 +146,11 @@ static size_t DVRT_UART_RX_CallBack_handler(uintptr_t context)
         if(nUnreadBytesAvailable != 0U)
         {
             nBytesRead = dvrt_USARTPlibAPI.read_t(&temp_buffer, 1U);
-			DVRT_ReceivedCmd.DVCmdArray[rxBufPtr++] = temp_buffer;
+            DVRT_ReceivedCmd.DVCmdArray[rxBufPtr++] = temp_buffer;
         }
     }
     DVCmdInterval_Counter = 0;
-	return nBytesRead;
+    return nBytesRead;
 }
 
 
@@ -181,7 +164,7 @@ void DVRT_Initialize(void)
         DVPMA[index].size = 0;
     }
 
-    DVflag.streamOn = 1;
+    DVflag.streamOn = true;
     DVStreamInterval = DV_STREAM_TIME;
     DVCmdInterval = DV_RX_CMD_TIMEOUT;
 
@@ -195,15 +178,15 @@ void DVRT_Initialize(void)
 void DVRT_HandleCommand(void)
 {
     uint8_t VARcount, StartOfFrame, EndOfFrame;
-	uint8_t index;
-	DVRT_commands command_type;
+    uint8_t index;
+    DVRT_commands command_type;
 
     if(rxBufPtr >= DV_RX_CMD_MIN_SIZE)
     {
-		StartOfFrame = DVRT_ReceivedCmd.DVCmdArray[0];
+        StartOfFrame = DVRT_ReceivedCmd.DVCmdArray[0];
         index = rxBufPtr-1U;
         EndOfFrame = DVRT_ReceivedCmd.DVCmdArray[index];
-		
+
         if((StartOfFrame == DV_START_OF_FRAME) && (EndOfFrame == DV_END_OF_FRAME))
         {
             command_type = (DVRT_commands)DVRT_ReceivedCmd.stream.command;
@@ -240,32 +223,32 @@ void DVRT_HandleCommand(void)
                 }
                 case TURN_STREAMING_OFF:
                 {
-                        DVflag.streamOn = 0;
+                        DVflag.streamOn = false;
                         break;
                 }
                 case TURN_STREAMING_ON:
                 {
-                        DVflag.streamOn = 1;
+                        DVflag.streamOn = true;
                         DVStreamInterval_Counter = DVStreamInterval;
                         break;
                 }
                 case ONE_SHOT_READ:
                 {
-                        DVflag.osr = 1;
-                        DVflag.streamOn = 1;
+                        DVflag.osr = true;
+                        DVflag.streamOn = true;
                         DVStreamInterval_Counter = DVStreamInterval;
                         break;
                 }
                 case PING:
                 {
-                        DVflag.ping = 1;
-                        DVflag.streamOn = 1;
+                        DVflag.ping = true;
+                        DVflag.streamOn = true;
                         DVStreamInterval_Counter = DVStreamInterval;
                         break;
                 }
-				default:
-						/* Do nothing */
-                        break;   
+                default:
+                        /* Do nothing */
+                        break;
             }
         }
     }
