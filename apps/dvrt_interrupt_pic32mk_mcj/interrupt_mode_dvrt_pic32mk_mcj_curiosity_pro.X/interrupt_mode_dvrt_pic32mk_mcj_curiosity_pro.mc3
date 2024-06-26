@@ -406,9 +406,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="COVERITY_SUPPRESS_DEVIATION"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;COVERITY_SUPPRESS_DEVIATION&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
-    &lt;/Values&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
   &lt;/core&gt;
 &lt;/core&gt;
 </value>
@@ -2283,7 +2281,7 @@
    <generatedFileHashHistoryMap class="java.util.TreeMap">
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>54665ae8f731bb7f4a26a406e9fbd0a7bfef86c5715e15f423e8f54a5dd68fc2</hash>
+         <hash>ed2255450be42610da42765c1ac20e7b191ec5bc8312c719ea366d62ed34f147</hash>
       </entry>
       <entry>
          <file>..\src\config\default\device.h</file>
@@ -2303,11 +2301,11 @@
       </entry>
       <entry>
          <file>..\src\config\default\exceptions.c</file>
-         <hash>8f0978924ad7660604f76c054a8049ecbc1d1ef691e67891fec8d8a4888a15ef</hash>
+         <hash>265c985839caadb2fa9e8fc76e7bc3c160e31e9b2c96dc4006add33e5d7ee212</hash>
       </entry>
       <entry>
          <file>..\src\config\default\initialization.c</file>
-         <hash>9d7427a3e509096bdffdb39bdaa84973d4f3cc894a3abe42a466e58d0d0aef2e</hash>
+         <hash>d038a22508a10cbc0729d305d91c2b95f395264b9680b90777369aed31af9bec</hash>
       </entry>
       <entry>
          <file>..\src\config\default\interrupts.c</file>
@@ -2335,7 +2333,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\evic\plib_evic.h</file>
-         <hash>cb2353a50f427c7fd1c1e136a011cb983a24834b43d06264f81a332bb49b1b10</hash>
+         <hash>0ec1cfe8426a1003fc0f5622755015e48b269a18b573a5d3a1d6248c3c2e4afb</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\gpio\plib_gpio.c</file>
@@ -2383,7 +2381,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\toolchain_specifics.h</file>
-         <hash>e57248aaedd22ed239da924056b47f1d84b633161dc1503b2a0053c11bd7b48d</hash>
+         <hash>b4de6e02e3e48c62f7ba233405ffdf6ef31bb971d1a7b49efa1676f45cabc1ac</hash>
       </entry>
       <entry>
          <file>..\src\main.c</file>

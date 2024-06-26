@@ -56,10 +56,6 @@
 // *****************************************************************************
 /* MISRAC 2012 deviation block start */
 /* MISRA C-2012 Rule 21.2 deviated 4 times. Deviation record ID -  H3_MISRAC_2012_R_21_2_DR_4 */
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma coverity compliance block deviate:4 "MISRA C-2012 Rule 21.2" "H3_MISRAC_2012_R_21_2_DR_4"
 void _general_exception_handler(void);
 void _bootstrap_exception_handler(void);
 
@@ -157,9 +153,6 @@ void __attribute__((noreturn, weak)) _bootstrap_exception_handler(void)
         #endif
     }
 }
-
-#pragma coverity compliance end_block "MISRA C-2012 Rule 21.2"
-#pragma GCC diagnostic pop
 /*******************************************************************************
  End of File
 */

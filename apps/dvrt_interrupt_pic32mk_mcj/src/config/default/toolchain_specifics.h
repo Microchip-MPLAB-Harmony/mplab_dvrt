@@ -32,12 +32,6 @@
 /* MISRAC 2012 deviation block start */
 /* MISRA C-2012 Rule 21.1 deviated 13 times. Deviation record ID -  H3_MISRAC_2012_R_21_1_DR_3 */
 /* MISRA C-2012 Rule 21.2 deviated 26 times. Deviation record ID -  H3_MISRAC_2012_R_21_2_DR_3 */
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma coverity compliance block \
-   (deviate:13 "MISRA C-2012 Rule 21.1" "H3_MISRAC_2012_R_21_1_DR_3")\
-   (deviate:26 "MISRA C-2012 Rule 21.2" "H3_MISRAC_2012_R_21_2_DR_3")
 #ifndef   __ASM
     #define __ASM                      __asm__
 #endif
@@ -86,9 +80,6 @@
 #ifndef FORMAT_ATTRIBUTE
    #define FORMAT_ATTRIBUTE(archetype, string_index, first_to_check)  __attribute__ ((format (archetype, string_index, first_to_check)))
 #endif
-
-#pragma coverity compliance end_block "MISRA C-2012 Rule 21.1" "MISRA C-2012 Rule 21.2"
-#pragma GCC diagnostic pop
 
 #endif // end of header
 

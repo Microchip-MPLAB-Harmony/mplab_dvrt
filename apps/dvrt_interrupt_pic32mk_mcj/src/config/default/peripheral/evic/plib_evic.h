@@ -71,9 +71,6 @@
 
 /* MISRAC 2012 deviation block start */
 /* MISRA C-2012 Rule 5.4 deviated: 5  Deviation record ID -  H3_MISRAC_2012_R_5_4_DR_1 */
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunknown-pragmas"
-    #pragma coverity compliance block deviate "MISRA C-2012 Rule 5.4" "H3_MISRAC_2012_R_5_4_DR_1"
 #define    INT_SOURCE_CORE_TIMER   (_CORE_TIMER_VECTOR)
 
 #define    INT_SOURCE_CORE_SOFTWARE_0   (_CORE_SOFTWARE_0_VECTOR)
@@ -388,9 +385,6 @@
 
 #define    INT_SOURCE_CORE_FAST_DEBUG_CHAN   (_CORE_FAST_DEBUG_CHAN_VECTOR)
 
-
-    #pragma coverity compliance end_block "MISRA C-2012 Rule 5.4"
-    #pragma GCC diagnostic pop
     /* MISRAC 2012 deviation block end */
 typedef uint32_t INT_SOURCE;
 
