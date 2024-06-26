@@ -11,54 +11,40 @@ Added DVRT support for MCUs and MPU devices.
 ### Device Support
 The following table provides information on DVRT support for MCUs and MPUs.
 
-    | Product Family      | TC_u2212  |  TC_u2249  | TC_6082  |  TC_44162  |  TMR_02815  |  TMR1_02141 |   TMR_00745  |  TMR1_00687  |  Systick  |  Coretimer  |
-    | --------------------| --------- | ---------- |--------- | ---------- | ----------- | ----------- |  ----------- | ------------ | --------- | ----------- |
-    | SAM C20/C21         |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | SAM D10             |   Yes     |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM D11             |   Yes     |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM D20             |   Yes     |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM HA1             |   Yes     |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM L21             |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | SAM L22             |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | SAM D21 DA1         |           |            |          |            |             |     Yes     |              |              |    Yes    |             |
-    | PIC32CM MC00        |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | PIC32CM JH00/01     |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | SAM L10/L11         |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | PIC32CM LE/LS       |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | PIC32 CK GC/SG      |           |            |          |            |             |             |              |              |    Yes    |             |
-    | CEC173X             |           |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM G55             |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | PIC32CX SG41        |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | SAM D5X/E5X         |           |    Yes     |          |            |             |             |              |              |    Yes    |             |
-    | PIC32CX MT          |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
-    | PIC32CX BZ3         |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | PIC32CX BZ2         |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | PIC32CZ-CA          |           |            |          |            |             |             |              |              |    Yes    |             |
-    | SAM E7X/V7X/S7X     |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | SAM RH71            |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | SAM RH707           |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | SAM 9X7             |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
-    | SAM 9X6             |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
-    | SAM A5D2            |           |            |   Yes    |            |             |             |              |              |    Yes    |             |
-    | SAM A7G5            |           |            |          |    Yes     |             |             |              |              |    Yes    |             |
-    | PIC32MZ DA          |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
-    | PIC32MZ EF          |           |            |          |            |             |             |     Yes      |     Yes      |           |     Yes     |
-    | PIC32MZ-W1          |           |            |          |            |             |     Yes     |     Yes      |              |           |     Yes     |
-    | PIC32MK             |           |            |          |            |     Yes     |     Yes     |              |              |           |     Yes     |
-    | PIC32MM             |           |            |          |            |             |             |     Yes      |              |           |     Yes     |
-    | PIC32MX             |           |            |          |            |             |     Yes     |     Yes      |     Yes      |           |     Yes     |
-
-### Known Issues
-
-The current known issues are as follows:
-
--   None
-
-
-### Development Tools
-
-- [MPLAB® X IDE v6.20](https://www.microchip.com/mplab/mplab-x-ide)
-- MPLAB® X IDE plug-ins:
-  - MPLAB® Code Configurator (MCC) v5.5.1
-- [MPLAB® XC32 C/C++ Compiler v4.40](https://www.microchip.com/mplab/compilers)
-
+| Product Family      | Supported Timers  |
+|---------------------|-----------|
+| SAM C20/C21         |TC, Systick|
+| SAM D10             |TC, Systick|
+| SAM D11             |TC, Systick|
+| SAM D20             |TC, Systick|
+| SAM HA1             |TC, Systick|
+| SAM L21             |TC, Systick|
+| SAM L22             |TC, Systick|
+| SAM D21 DA1         |TC, Systick|
+| PIC32CM MC00        |TC, Systick|
+| PIC32CM JH00/01     |TC, Systick|
+| SAM L10/L11         |TC, Systick|
+| PIC32CM LE/LS       |TC, Systick|
+| PIC32 CK GC/SG      |TC, Systick|
+| CEC173X             |TC, Systick|
+| SAM G55             |TC, Systick|
+| PIC32CX SG41        |TC, Systick|
+| SAM D5X/E5X         |TC, Systick|
+| PIC32CX MT          |TC, Systick|
+| PIC32CX BZ3         |TC, Systick|
+| PIC32CX BZ2         |TC, Systick|
+| PIC32CZ-CA          |TC, Systick|
+| SAM E7X/V7X/S7X     |TC, Systick|
+| SAMRH71             |TC, Systick|
+| SAMRH707            |TC, Systick|
+| SAM9X7x             |TC|
+| SAM9X60             |TC|
+| SAMA5D2x            |TC|
+| SAMA7G5x            |TC|
+| SAMA7D65x           |TC|
+| PIC32MZ DA          |TMR, CoreTimer|
+| PIC32MZ EF          |TMR, CoreTimer|
+| PIC32MZ-W1          |TMR, CoreTimer|
+| PIC32MK             |TMR, CoreTimer|
+| PIC32MM             |TMR, CoreTimer|
+| PIC32MX             |TMR, CoreTimer|
