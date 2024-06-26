@@ -96,9 +96,7 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="COVERITY_SUPPRESS_DEVIATION"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;COVERITY_SUPPRESS_DEVIATION&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
-    &lt;/Values&gt;
+    &lt;Values dnOrder=&quot;0&quot;/&gt;
   &lt;/core&gt;
 &lt;/core&gt;
 </value>
@@ -3285,11 +3283,11 @@
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\initialization.c</file>
-         <hash>1c3d01e51e743612653ea3933872765f0ab5d7840effe96eed6ffd4ea8f62cc0</hash>
+         <hash>8b244e651d48627d9d82af6a212b9433dd635a5c1fcd24d372590608f23e3b09</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\interrupts.c</file>
-         <hash>f685035f895705db037a41e7d004b3da34bc86fae62aac60af43111ce581ff96</hash>
+         <hash>c67b243d7db2fb5f0c79897a665f119445857ab47fbc6a48d1a16bde971c7339</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\interrupts.h</file>
@@ -3297,7 +3295,7 @@
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\libc_syscalls.c</file>
-         <hash>df1be7627b968b650c3389237792bf3bf4f4318a64a06a4bfe7b76730551c252</hash>
+         <hash>88bb2e34c939601b5b7ad076556e3ee0fcedf388436b8cddb6d6fd3e9d07472f</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\peripheral\clock\plib_clock.c</file>
@@ -3377,7 +3375,7 @@
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\startup_xc32.c</file>
-         <hash>6b73f68a3f402202d7405702269e85ed96d0a878ee80c3826dd61a9d43766996</hash>
+         <hash>e6227d89e36b74af1bc21e00e80b390502c97aaaa65796291f63b2d96cf0678e</hash>
       </entry>
       <entry>
          <file>..\src\config\sam_d21_xpro\stdio\xc32_monitor.c</file>
